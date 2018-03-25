@@ -1,94 +1,54 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li>
-        <a
-          href="https://vuejs.org"
-          target="_blank"
-        >
-          Core Docs
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://forum.vuejs.org"
-          target="_blank"
-        >
-          Forum
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://chat.vuejs.org"
-          target="_blank"
-        >
-          Community Chat
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://twitter.com/vuejs"
-          target="_blank"
-        >
-          Twitter
-        </a>
-      </li>
-      <br>
-      <li>
-        <a
-          href="http://vuejs-templates.github.io/webpack/"
-          target="_blank"
-        >
-          Docs for This Template
-        </a>
+    <h2>ths is a todo list</h2>
+    <input v-model="newItem" v-on:keyup.enter="addNew" />
+    <ul >
+      <li v-for="item in items" v-bind:class="{finished:item.isFinished}" v-on:click="toggleFinished(item)">
+        {{item.label}}
       </li>
     </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li>
-        <a
-          href="http://router.vuejs.org/"
-          target="_blank"
-        >
-          vue-router
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vuex.vuejs.org/"
-          target="_blank"
-        >
-          vuex
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vue-loader.vuejs.org/"
-          target="_blank"
-        >
-          vue-loader
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-        >
-          awesome-vue
-        </a>
-      </li>
-    </ul>
+    <h4>child tell me:{{childWord}}</h4>
+    <comp fathermsg='wo zhen sha' 
+    v-on:child-tell-me-something="boyTo"></comp>
   </div>
 </template>
 
 <script>
+import Localstorage from './localstorage'
+import comp from './comp'
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Hellow Vue.js App  chunchun~~',
+      items:Localstorage.fetch(),
+      newItem:'',
+      childWord:''
+
+    }
+  },
+  components:{comp},
+  watch:{
+    items:{
+      handler:function(items){
+        Localstorage.save(items)
+      },
+      deep: true
+    }
+  },
+  methods:{
+    toggleFinished:function(item){
+      item.isFinished = !item.isFinished
+    },
+    addNew:function(){
+      this.items.push(
+        {label:this.newItem,isFinished:false}
+      )
+      this.newItem=''
+    },
+    boyTo:function(msg){
+      this.childWord=msg
     }
   }
 }
@@ -104,10 +64,14 @@ ul {
   padding: 0;
 }
 li {
-  display: inline-block;
-  margin: 0 10px;
+  margin: 10px;
+  display:inline-block;
 }
 a {
   color: #42b983;
+}
+.finished{
+  color:blue;
+  text-decoration:underline;
 }
 </style>
